@@ -13,6 +13,8 @@ public class BoardDisplay extends GameObserver {
 		this.game = game;
 		this.game.attach(this);
 		
+		this.board = board;
+		
 		this.io = io;
 		
 		start();
@@ -23,15 +25,27 @@ public class BoardDisplay extends GameObserver {
 		
 	io.println("+----+-------+-------+-------+-------+-------+-------+----+");
 	
-	List<String> playerTwoHouses = board.getPlayerTwoHouses();
-	String playerTwo = "| P2 | 6[ " + playerTwoHouses.get(5) + "] | 5[ 4] | 4[ 4] | 3[ 4] | 2[ 4] | 1[ 4] |  0 |";
-	io.println(playerTwo);
+	List<Integer> playerTwoHouses = board.getPlayerTwoHouses();
+	String playerTwoString = "| P2 | 6[ " + playerTwoHouses.get(5) + "] | 5[ "
+						+ playerTwoHouses.get(4) + "] | 4[ "
+						+ playerTwoHouses.get(3) + "] | 3[ "
+						+ playerTwoHouses.get(2) + "] | 2[ "
+						+ playerTwoHouses.get(1) + "] | 1[ "
+						+ playerTwoHouses.get(0) + "] |  "
+						+ board.getPlayerOneStore() + " |";
+	io.println(playerTwoString);
 	
 	io.println("|    |-------+-------+-------+-------+-------+-------|    |");
 	
-	List<String> playerOneHouses = board.getPlayerOneHouses();
-	String playerOne = "|  0 | 1[ " + playerOneHouses.get(0) + "] | 2[ 4] | 3[ 4] | 4[ 4] | 5[ 4] | 6[ 4] | P1 |";
-	io.println(playerOne);
+	List<Integer> playerOneHouses = board.getPlayerOneHouses();
+	String playerOneString = "|  " + board.getPlayerTwoStore() + " | 1[ "
+					+ playerOneHouses.get(0) + "] | 2[ "
+					+ playerOneHouses.get(1) + "] | 3[ " 
+					+ playerOneHouses.get(2) + "] | 4[ " 
+					+ playerOneHouses.get(3) + "] | 5[ " 
+					+ playerOneHouses.get(4) + "] | 6[ " 
+					+ playerOneHouses.get(5) + "] | P1 |";
+	io.println(playerOneString);
 	
 	io.println("+----+-------+-------+-------+-------+-------+-------+----+");
 	}
