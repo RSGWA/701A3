@@ -6,6 +6,8 @@ import java.util.List;
 
 public class Player {
 
+	// Index is the number of the house and the value is the number
+	// of seeds stored in that house.
 	private List<Integer> houses;
 	private int store;
 	
@@ -26,9 +28,7 @@ public class Player {
 	}
 	
 	// Sows seeds into houses and respective players store. 
-	// Returns true if the player must sow seeds into the opposing players houses
-	// Returns false if the player has sown its last seed within its own houses or its store
-	public boolean sow(int houseNumber) {
+	public int sow(int houseNumber) {
 		
 		int seeds = houses.get(houseNumber - 1);
 		
@@ -36,23 +36,22 @@ public class Player {
 		if (houseNumber == 6) {
 			store++;
 			if (seeds > 1) {
-				return true;
+				return seeds - 1;
 			} else {
-				return false;
+				return 0;
 			}
 		} else {
 			
 			for (int i = houseNumber; i < houseNumber + seeds; i ++) {
 				if (i == 6) {
 					store++;
-				} else if (i > 6) {
-					return true;
+					return seeds - 1; 
 				} else {
 					houses.set(i, houses.get(i) + 1);
 				}
 			}
 		}
 		
-		return false;
+		return 0;
 	}
 }
