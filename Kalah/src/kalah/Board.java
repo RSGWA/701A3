@@ -1,45 +1,73 @@
 package kalah;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.qualitascorpus.testsupport.IO;
+public class Board {
 
-public class Board extends GameObserver {
-
-	private IO io;
+	private List<Integer> playerOneHouses;
+	private List<Integer> playerTwoHouses;
 	
-	public Board(IO io, Game game) {
+	private List<Integer> board;
+	
+	private int playerOneStore;
+	private int playerTwoStore;
+	
+	private Game game;
+	
+	public Board(Game game) {
 		this.game = game;
-		this.game.attach(this);
-		this.io = io;
 		
-		start();
-	}
-	
-	@Override
-	public void update() {
+		playerOneHouses = new ArrayList<>();
+		playerTwoHouses = new ArrayList<>();
 		
-	io.println("+----+-------+-------+-------+-------+-------+-------+----+");
-	
-	List<Integer> playerTwoHouses = game.getPlayerTwoHouses();
-	String playerTwo = "| P2 | 6[ " + playerTwoHouses.get(5) + "] | 5[ 4] | 4[ 4] | 3[ 4] | 2[ 4] | 1[ 4] |  0 |";
-	io.println(playerTwo);
-	
-	io.println("|    |-------+-------+-------+-------+-------+-------|    |");
-	
-	List<Integer> playerOneHouses = game.getPlayerOneHouses();
-	String playerOne = "|  0 | 1[ " + playerOneHouses.get(0) + "] | 2[ 4] | 3[ 4] | 4[ 4] | 5[ 4] | 6[ 4] | P1 |";
-	io.println(playerOne);
-	
-	io.println("+----+-------+-------+-------+-------+-------+-------+----+");
+		board = new ArrayList<>();
+		
+		for (int i = 0; i < 12; i++) {
+			board.add(4);
+		}
 	}
 	
-	private void start() {
-		io.println("+----+-------+-------+-------+-------+-------+-------+----+");
-		io.println("| P2 | 6[ 4] | 5[ 4] | 4[ 4] | 3[ 4] | 2[ 4] | 1[ 4] |  0 |");
-		io.println("|    |-------+-------+-------+-------+-------+-------|    |");
-		io.println("|  0 | 1[ 4] | 2[ 4] | 3[ 4] | 4[ 4] | 5[ 4] | 6[ 4] | P1 |");
-		io.println("+----+-------+-------+-------+-------+-------+-------+----+");	
+	public List<String> getPlayerOneHouses() {
+		List<String> houses = new ArrayList<String>(playerOneHouses.size()); 
+		for (Integer myInt : playerOneHouses) { 
+			houses.add(String.valueOf(myInt)); 
+		}
+		return houses;
 	}
 	
+	public List<String> getPlayerTwoHouses() {
+		List<String> houses = new ArrayList<String>(playerTwoHouses.size()); 
+		for (Integer myInt : playerTwoHouses) { 
+			houses.add(String.valueOf(myInt)); 
+		}
+		return houses;
+	}
+
+	public void updateBoard(int houseNumber) {
+		
+		int houseIndex = houseNumber - 1;
+		
+		if (game.getPlayerTurn() == 2) {
+			houseIndex = houseIndex + 7;
+		}
+		
+		// Seed count of chosen house
+		int seeds = board.get(houseIndex);
+		int seedsUsed = 0;
+		
+		houseIndex++; // Start sowing at house after chosen house
+		
+		while (seedsUsed < seeds) {
+			
+			if (((game.getPlayerTurn() == 1) && (houseIndex != 13)) || ((game.getPlayerTurn() == 2) && (houseIndex != 6))) {
+				board.set(houseIndex, board.get(houseIndex) + 1);
+				seedsUsed++;
+			}
+			if (houseIndex > board.size()) {
+				houseIndex = 0;
+			}
+			houseIndex++;
+		}
+	}
 }

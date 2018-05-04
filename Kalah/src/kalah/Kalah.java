@@ -14,11 +14,13 @@ public class Kalah {
 	public void play(IO io) {
 		
 		Game game = new Game();
-		Board board = new Board(io, game);
+		Board board = new Board(game);
+		BoardDisplay display = new BoardDisplay(io, game, board);
 		
 		while (!game.isGameOver()) {
 			int houseNumber = io.readInteger("Player " + game.getPlayerTurn() + "'s turn - Specify house number or 'q' to quit: ", 1, 6, -1, "q");
-			game.updateGameState(houseNumber);
+			board.updateBoard(houseNumber);
+			game.updateGameState();
 		}
 		
 	}

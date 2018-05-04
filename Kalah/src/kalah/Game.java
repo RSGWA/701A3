@@ -10,36 +10,14 @@ public class Game {
 	private int playerTurn;
 	private boolean gameOver;
 	
-	private Player playerOne;
-	private Player playerTwo;
-	
 	public Game() {
-		this.playerOne = new Player();
-		this.playerTwo = new Player();
 		this.playerTurn = 1;
 		this.gameOver = false;
 	}
 	
-	public void updateGameState(int houseNumber) {
-		
-		if (playerTurn == 1) {
-			int leftOverSeeds = playerOne.sow(houseNumber);
-			if (leftOverSeeds > 1) {
-				System.out.println("NOW SOWING IN PLAYER TWOS HOUSES");
-			}
-		} else {
-			
-		}
+	public void updateGameState() {	
 		nextPlayerTurn();
 		notifyAllObservers();
-	}
-	
-	public List<Integer> getPlayerOneHouses() {
-		return playerOne.getHouses();
-	}
-	
-	public List<Integer> getPlayerTwoHouses() {
-		return playerTwo.getHouses();
 	}
 	
 	public int getPlayerTurn() {
