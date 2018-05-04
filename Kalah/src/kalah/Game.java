@@ -21,6 +21,15 @@ public class Game {
 	}
 	
 	public void updateGameState(int houseNumber) {
+		
+		if (playerTurn == 1) {
+			int leftOverSeeds = playerOne.sow(houseNumber);
+			if (leftOverSeeds > 1) {
+				System.out.println("NOW SOWING IN PLAYER TWOS HOUSES");
+			}
+		} else {
+			
+		}
 		nextPlayerTurn();
 		notifyAllObservers();
 	}

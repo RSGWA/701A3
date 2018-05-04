@@ -42,10 +42,11 @@ public class Player {
 			}
 		} else {
 			
-			for (int i = houseNumber; i < houseNumber + seeds; i ++) {
+			for (int i = houseNumber; i < houseNumber + seeds - 1; i ++) {
 				if (i == 6) {
 					store++;
-					return seeds - 1; 
+					// TODO: Fix
+					// return seeds - 1; 
 				} else {
 					houses.set(i, houses.get(i) + 1);
 				}
