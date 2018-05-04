@@ -1,23 +1,15 @@
 package kalah;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Game {
-	
-	private List<GameObserver> observers = new ArrayList<GameObserver>();
-	
+
 	private int playerTurn;
 	private boolean gameOver;
+	private boolean playerContinues;
 	
 	public Game() {
 		this.playerTurn = 1;
 		this.gameOver = false;
-	}
-	
-	public void updateGameState() {	
-		nextPlayerTurn();
-		notifyAllObservers();
+		this.playerContinues = false;
 	}
 	
 	public int getPlayerTurn() {
@@ -28,7 +20,11 @@ public class Game {
 		return this.gameOver;
 	}
 	
-	private void nextPlayerTurn() {
+	public void gameOver() {
+		gameOver = true;
+	}
+	
+	public void nextPlayerTurn() {
 		if (playerTurn == 1) {
 			playerTurn = 2;
 		} else {
@@ -36,14 +32,4 @@ public class Game {
 		}
 	}
 	
-	public void attach(GameObserver observer) {
-		observers.add(observer);		
-	}
-	
-	// Call to update board
-	public void notifyAllObservers() {
-		for (GameObserver observer : observers) {
-			observer.update();
-		}
-	}
 }
