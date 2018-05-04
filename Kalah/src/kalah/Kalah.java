@@ -21,8 +21,6 @@ public class Kalah {
 			int houseNumber = io.readInteger("Player P" + game.getPlayerTurn() + "'s turn - Specify house number or 'q' to quit: ", 1, 6, -1, "q");
 			// Quit the game
 			if (houseNumber == -1) {
-				io.println("Game over");
-				display.printBoard(); // Display board before exiting application 
 				break;
 			}
 			
