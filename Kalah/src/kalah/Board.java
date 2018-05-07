@@ -7,8 +7,10 @@ import java.util.List;
 public class Board {
 	
 	private List<Integer> board;
-	
 	private Game game;
+	private BoardChecker check;
+	
+	private int houseLastSown;
 	
 	public Board(Game game) {
 		this.game = game;
@@ -22,6 +24,8 @@ public class Board {
 		// Initialize player store values
 		board.set(6, 0);
 		board.set(13, 0);
+		
+		check = new BoardChecker(this, game);
 	}
 	
 	public List<Integer> getPlayerOneHouses() {
@@ -41,46 +45,77 @@ public class Board {
 	public int getPlayerTwoStore() {
 		return board.get(13);
 	}
-
-	public boolean checkEmptyHouse(int houseNumber) {
-		int houseIndex;
-		if (game.getPlayerTurn() == 1) {
-			houseIndex = houseNumber - 1;
-		} else {
-			houseIndex = houseNumber + 6;
-		}
-
-		if (board.get(houseIndex) == 0) {
-			return true;
-		}
-		return false;
+	
+	public int getSeedCount(int index) {
+		return board.get(index);
 	}
-
-	private void checkCantMove() {
-		int counter = 0;
-		if (game.getPlayerTurn() == 1) {
-			for (int seed : getPlayerOneHouses()) {
-				if (seed == 0) {
-					counter++;
-				}
-			}
-		} else {
-			for (int seed : getPlayerTwoHouses()) {
-				if (seed == 0) {
-					counter++;
-				}
+	
+	public int getLastHouseSown() {
+		return this.houseLastSown;
+	}
+	
+	// For end game, all seeds on the board are placed in their respective
+	// players stores
+	public void allSeedsToStore() {
+		List<Integer> playerOneHouses = getPlayerOneHouses();
+		int score = 0;
+		for (int seed : playerOneHouses) {
+			if (seed > 0) {
+				score = score + seed;
 			}
 		}
-		if (counter >= 5) {
-			game.gameOver();
+		playerOneHouses.add(getPlayerOneStore() + score);
+		score = 0;
+		List<Integer> playerTwoHouses = getPlayerTwoHouses();
+		for (int seed : playerTwoHouses) {
+			if (seed > 0) {
+				score = score + seed;
+			}
 		}
-	}
-	public void updateBoard(int houseNumber) {
+		playerTwoHouses.add(getPlayerTwoStore() + score);
 		
-		checkCantMove();
+		List<Integer> newBoard = new ArrayList<>(playerOneHouses);
+		newBoard.addAll(playerTwoHouses);
+						
+		board = newBoard;
+	}
+	
+	public void capture(int houseIndex) {
+		List<Integer> playerOneHouses = getPlayerOneHouses();
+		List<Integer> playerTwoHouses = getPlayerTwoHouses();
+		if (game.getPlayerTurn() == 1) {
+			
+			Collections.reverse(playerTwoHouses);
+			int score = playerTwoHouses.get(houseIndex) + 1;
+			playerOneHouses.add(getPlayerOneStore() + score);
+					
+			playerOneHouses.set(houseIndex, 0);
+			playerTwoHouses.set(houseIndex, 0);
+			Collections.reverse(playerTwoHouses);
+			playerTwoHouses.add(getPlayerTwoStore());
+		} else {
+			houseIndex = houseIndex - 7;
+			Collections.reverse(playerOneHouses);
+			int score = playerOneHouses.get(houseIndex) + 1;
+							
+			playerTwoHouses.add(getPlayerTwoStore() + score);
+							
+			playerTwoHouses.set(houseIndex, 0);
+			playerOneHouses.set(houseIndex, 0);
+			Collections.reverse(playerOneHouses);
+			playerOneHouses.add(getPlayerOneStore());
+		}
+		List<Integer> newBoard = new ArrayList<>(playerOneHouses);
+		newBoard.addAll(playerTwoHouses);
+						
+		board = newBoard;
+	}
+	
+	public void updateBoard(int houseNumber) {
 		
 		int houseIndex = houseNumber - 1;
 		
+		// Adjust house index according to whose turn it is
 		if (game.getPlayerTurn() == 2) {
 			houseIndex = houseIndex + 7;
 		}
@@ -92,7 +127,6 @@ public class Board {
 		board.set(houseIndex, 0); // Pick up all seeds in chosen house
 		
 		houseIndex++; // Start sowing at house after chosen house
-		
 		
 		while (seedsUsed < seeds) {
 			
@@ -107,64 +141,11 @@ public class Board {
 			houseIndex++;
 		}
 		
-		// Make house index represent the house where the last seed was sown
-		houseIndex--;
+		houseLastSown = houseIndex - 1;
 		
-		// Last seed is sown in players store so they continue
-		if (((game.getPlayerTurn() == 1) && (houseIndex == 6)) || ((game.getPlayerTurn() == 2) && (houseIndex == 13))) {
-			game.nextPlayerTurn();
+		if (check.captureMove()) {
+			capture(houseLastSown);
 		}
-		
-		// Check capture - last seed placed in players own house that was empty and opposite house is empty
-		checkCapture(houseIndex);
 	}
-	
-	private void checkCapture(int houseIndex) {
-		// Check capture - last seed placed in players own house that was empty and opposite house is empty
-				if (game.getPlayerTurn() == 1) {
-					if (0 <= houseIndex && houseIndex <= 5) {
-						List<Integer> playerOneHouses = getPlayerOneHouses();
-						List<Integer> playerTwoHouses = getPlayerTwoHouses();
-						Collections.reverse(playerTwoHouses);
-						
-						if (playerOneHouses.get(houseIndex) == 1 && playerTwoHouses.get(houseIndex) >= 1) {
-							int score = playerTwoHouses.get(houseIndex) + 1;
-							playerOneHouses.add(getPlayerOneStore() + score);
-							
-							playerOneHouses.set(houseIndex, 0);
-							playerTwoHouses.set(houseIndex, 0);
-							Collections.reverse(playerTwoHouses);
-							playerTwoHouses.add(getPlayerTwoStore());
-							
-							List<Integer> newBoard = new ArrayList<>(playerOneHouses);
-							newBoard.addAll(playerTwoHouses);
-							
-							board = newBoard;
-						}	
-					}
-				} else {
-					if (7 <= houseIndex && houseIndex <= 12) {
-						houseIndex = houseIndex - 7;
-						List<Integer> playerOneHouses = getPlayerOneHouses();
-						List<Integer> playerTwoHouses = getPlayerTwoHouses();
-						Collections.reverse(playerOneHouses);
-						
-						if (playerTwoHouses.get(houseIndex) == 1 && playerOneHouses.get(houseIndex) >= 1) {
-							int score = playerOneHouses.get(houseIndex) + 1;
-							
-							playerTwoHouses.add(getPlayerTwoStore() + score);
-							
-							playerTwoHouses.set(houseIndex, 0);
-							playerOneHouses.set(houseIndex, 0);
-							Collections.reverse(playerOneHouses);
-							playerOneHouses.add(getPlayerOneStore());
-							
-							List<Integer> newBoard = new ArrayList<>(playerOneHouses);
-							newBoard.addAll(playerTwoHouses);
-							
-							board = newBoard;
-						}	
-					}
-				}
-	}
+
 }

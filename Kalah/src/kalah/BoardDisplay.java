@@ -17,6 +17,24 @@ public class BoardDisplay {
 		printBoard();
 	}
 	
+	public void printScores() {
+		io.println("\tplayer 1:" + board.getPlayerOneStore());
+		io.println("\tplayer 2:" + board.getPlayerTwoStore());
+		
+		if (board.getPlayerOneStore() > board.getPlayerTwoStore()) {
+			io.println("Player 1 wins!");
+		} else if (board.getPlayerOneStore() == board.getPlayerTwoStore()) {
+			io.println("A tie!");
+		} else {
+			io.println("Player 2 wins!");
+		}
+	}
+	
+	public void printGameOver() {
+		io.println("Game over");
+		printBoard();
+	}
+	
 	public void printBoard() {
 		
 	io.println("+----+-------+-------+-------+-------+-------+-------+----+");

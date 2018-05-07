@@ -15,22 +15,38 @@ public class Kalah {
 
 		Game game = new Game();
 		Board board = new Board(game);
+		BoardChecker check = new BoardChecker(board, game);
 		BoardDisplay display = new BoardDisplay(io, board);
+		
+		boolean quit = false;
 		
 		while (!game.isGameOver()) {
 			int houseNumber = io.readInteger("Player P" + game.getPlayerTurn() + "'s turn - Specify house number or 'q' to quit: ", 1, 6, -1, "q");
 			// Quit the game
 			if (houseNumber == -1) {
+				quit = true;
 				break;
 			}
 			
-			if (board.checkEmptyHouse(houseNumber)) {
+			if (check.emptyHouseSelected(houseNumber)) {
 				io.println("House is empty. Move again.");
 			} else {
 				board.updateBoard(houseNumber);
-				game.nextPlayerTurn();
+				if (!check.additionalMove()) {
+					game.nextPlayerTurn();
+				}
 			}
 			display.printBoard();
+			check.noMoreMoves();
+		}
+		
+		if (quit) {
+			display.printGameOver();
+		} else {
+			display.printGameOver();
+			// Place all seeds in respective players store to decide winner
+			board.allSeedsToStore();
+			display.printScores();
 		}
 		
 	}
