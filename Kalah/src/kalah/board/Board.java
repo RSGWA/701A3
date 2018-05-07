@@ -1,8 +1,10 @@
-package kalah;
+package kalah.board;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import kalah.Game;
 
 public class Board {
 	

@@ -3,6 +3,10 @@ package kalah;
 import com.qualitascorpus.testsupport.IO;
 import com.qualitascorpus.testsupport.MockIO;
 
+import kalah.board.Board;
+import kalah.board.BoardChecker;
+import kalah.board.BoardDisplay;
+
 /**
  * This class is the starting point for a Kalah implementation using
  * the test infrastructure.
@@ -40,10 +44,9 @@ public class Kalah {
 			check.noMoreMoves();
 		}
 		
-		if (quit) {
-			display.printGameOver();
-		} else {
-			display.printGameOver();
+		display.printGameOver();
+		
+		if (!quit) {
 			// Place all seeds in respective players store to decide winner
 			board.allSeedsToStore();
 			display.printScores();
