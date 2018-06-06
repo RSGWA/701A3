@@ -3,7 +3,11 @@ package kalah.board;
 import java.util.Collections;
 import java.util.List;
 
+import kalah.Board;
 import kalah.Game;
+import kalah.House;
+import kalah.Store;
+import kalah.TurnManager;
 
 public class BoardChecker {
 
@@ -15,73 +19,86 @@ public class BoardChecker {
 		this.game = game;
 	}
 	
-	public void noMoreMoves() {
+	public void noMoreMoves(int playerTurn) {
 		int counter = 0;
-		if (game.getPlayerTurn() == 1) {
-			for (int seed : board.getPlayerOneHouses()) {
-				if (seed == 0) {
-					counter++;
-				}
-			}
-		} else {
-			for (int seed : board.getPlayerTwoHouses()) {
-				if (seed == 0) {
-					counter++;
-				}
+		
+		for (House h : board.getPlayers().get(playerTurn).getHouses()) {
+			if (h.seedCount() == 0) {
+				counter++;
 			}
 		}
+		
 		if (counter > 5) {
 			game.gameOver();
 		}
 	}
 	
-	public boolean emptyHouseSelected(int houseNumber) {
-		int houseIndex;
-		if (game.getPlayerTurn() == 1) {
-			houseIndex = houseNumber - 1;
-		} else {
-			houseIndex = houseNumber + 6;
-		}
-
-		if (board.getSeedCount(houseIndex) == 0) {
+	public boolean emptyHouseSelected(int houseNumber, int playerTurn) {
+		int houseIndex = houseNumber - 1;
+		
+		if (board.getPlayers().get(playerTurn).getHouses().get(houseIndex).seedCount() == 0) {
 			return true;
 		}
 		return false;
 	}
 	
-	public boolean captureMove() {
-		int houseIndex = board.getLastHouseSown();
-		List<Integer> playerOneHouses = board.getPlayerOneHouses();
-		List<Integer> playerTwoHouses = board.getPlayerTwoHouses();
-		// Check capture - last seed placed in players own house that was empty and opposite house is empty
-		if (game.getPlayerTurn() == 1) {
-			if (0 <= houseIndex && houseIndex <= 5) {
+	public void captureMove(int playerTurn) {
+		int houseIndex = board.getHouseLastSown();
+		
+		// Last seed sown in players store
+		if (houseIndex < 0) {
+			return;
+		}
+		
+		List<House> playerOneHouses = board.getPlayers().get(0).getHouses();
+		List<House> playerTwoHouses = board.getPlayers().get(1).getHouses();
+		
+		Store playerOneStore = board.getPlayers().get(0).getStore();
+		Store playerTwoStore = board.getPlayers().get(1).getStore();
+
+		// Check capture - last seed placed in players own house that was empty and opposite house has at least one seed in it
+		if (board.getLastSownInOwnHouse()) {
+			if (playerTurn == 0) {
 				Collections.reverse(playerTwoHouses);
 				
-				if (playerOneHouses.get(houseIndex) == 1 && playerTwoHouses.get(houseIndex) >= 1) {
-					return true;
+				if (playerOneHouses.get(houseIndex).seedCount() == 1 && playerTwoHouses.get(houseIndex).seedCount() >= 1) {
+					int score = playerTwoHouses.get(houseIndex).seedCount() + 1;
+					playerOneStore.setSeedCount(playerOneStore.seedCount() + score);
+							
+					playerOneHouses.get(houseIndex).setSeedCount(0);
+					playerTwoHouses.get(houseIndex).setSeedCount(0);
 				}	
-			}
-		} else {
-			if (7 <= houseIndex && houseIndex <= 12) {
-				houseIndex = houseIndex - 7;
+				Collections.reverse(playerTwoHouses);
+			} else {
 				Collections.reverse(playerOneHouses);
 						
-				if (playerTwoHouses.get(houseIndex) == 1 && playerOneHouses.get(houseIndex) >= 1) {
-					return true;
+				if (playerTwoHouses.get(houseIndex).seedCount() == 1 && playerOneHouses.get(houseIndex).seedCount() >= 1) {
+					int score = playerOneHouses.get(houseIndex).seedCount() + 1;
+					playerTwoStore.setSeedCount(playerTwoStore.seedCount() + score);
+							
+					playerOneHouses.get(houseIndex).setSeedCount(0);
+					playerTwoHouses.get(houseIndex).setSeedCount(0);
 				}	
+				Collections.reverse(playerOneHouses);
 			}
 		}
-		return false;
 	}
 	
 	public boolean additionalMove() {
-		int houseIndex = board.getLastHouseSown();
-		if (((game.getPlayerTurn() == 1) && (houseIndex == 6)) || ((game.getPlayerTurn() == 2) && (houseIndex == 13))) {
+		int houseIndex = board.getHouseLastSown();
+		if (houseIndex < 0) {
 			return true;
 		}
-		
 		return false;
+	}
+
+	public int getPlayerTotalScore(int player) {
+		int score = 0;
+		for (House h : board.getPlayers().get(player).getHouses()) {
+			score += h.seedCount();
+		}
+		score += board.getPlayers().get(player).getStore().seedCount();
+		return score;
 	}
 	
 }

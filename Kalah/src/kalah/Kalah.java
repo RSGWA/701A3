@@ -3,7 +3,6 @@ package kalah;
 import com.qualitascorpus.testsupport.IO;
 import com.qualitascorpus.testsupport.MockIO;
 
-import kalah.board.Board;
 import kalah.board.BoardChecker;
 import kalah.board.BoardDisplay;
 
@@ -18,38 +17,42 @@ public class Kalah {
 	public void play(IO io) {
 
 		Game game = new Game();
-		Board board = new Board(game);
+		TurnManager tm = new TurnManager();
+		Board board = new Board();
 		BoardChecker check = new BoardChecker(board, game);
-		BoardDisplay display = new BoardDisplay(io, board);
+		BoardDisplay display = new BoardDisplay(io, board.getPlayers());
 		
 		boolean quit = false;
 		
 		while (!game.isGameOver()) {
-			int houseNumber = io.readInteger("Player P" + game.getPlayerTurn() + "'s turn - Specify house number or 'q' to quit: ", 1, 6, -1, "q");
+			int playerTurnDisplay = tm.getPlayerTurn() + 1;
+			int houseNumber = io.readInteger("Player P" + playerTurnDisplay + "'s turn - Specify house number or 'q' to quit: ", 1, 6, -1, "q");
 			// Quit the game
 			if (houseNumber == -1) {
 				quit = true;
 				break;
 			}
 			
-			if (check.emptyHouseSelected(houseNumber)) {
+			if (check.emptyHouseSelected(houseNumber, tm.getPlayerTurn())) {
 				io.println("House is empty. Move again.");
 			} else {
-				board.updateBoard(houseNumber);
+				board.move(houseNumber, tm.getPlayerTurn());
+				check.captureMove(tm.getPlayerTurn());
 				if (!check.additionalMove()) {
-					game.nextPlayerTurn();
+					tm.nextPlayerTurn();
 				}
 			}
+			
 			display.printBoard();
-			check.noMoreMoves();
+			
+			check.noMoreMoves(tm.getPlayerTurn());
 		}
 		
 		display.printGameOver();
 		
 		if (!quit) {
-			// Place all seeds in respective players store to decide winner
-			board.allSeedsToStore();
-			display.printScores();
+			// Display total scores for each player to determine the winner
+			display.printScores(check.getPlayerTotalScore(0), check.getPlayerTotalScore(1));
 		}
 		
 	}

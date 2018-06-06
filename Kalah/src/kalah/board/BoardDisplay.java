@@ -4,26 +4,31 @@ import java.util.List;
 
 import com.qualitascorpus.testsupport.IO;
 
+import kalah.House;
+import kalah.Player;
+
 public class BoardDisplay {
 
 	private IO io;
-	private Board board;
+	private Player playerOne;
+	private Player playerTwo;
 	
-	public BoardDisplay(IO io, Board board) {
-		this.board = board;
-		
+	public BoardDisplay(IO io, List<Player> players) {
 		this.io = io;
+		this.playerOne = players.get(0);
+		this.playerTwo = players.get(1);
 		
 		printBoard();
 	}
 	
-	public void printScores() {
-		io.println("\tplayer 1:" + board.getPlayerOneStore());
-		io.println("\tplayer 2:" + board.getPlayerTwoStore());
+	public void printScores(int playerOneScore, int playerTwoScore) {
 		
-		if (board.getPlayerOneStore() > board.getPlayerTwoStore()) {
+		io.println("\tplayer 1:" + playerOneScore);
+		io.println("\tplayer 2:" + playerTwoScore);
+		
+		if (playerOneScore > playerTwoScore) {
 			io.println("Player 1 wins!");
-		} else if (board.getPlayerOneStore() == board.getPlayerTwoStore()) {
+		} else if (playerOneScore == playerTwoScore) {
 			io.println("A tie!");
 		} else {
 			io.println("Player 2 wins!");
@@ -39,41 +44,27 @@ public class BoardDisplay {
 		
 	io.println("+----+-------+-------+-------+-------+-------+-------+----+");
 	
-	List<Integer> playerTwoHouses = board.getPlayerTwoHouses();
-	String playerTwo = String.format("| P2 | 6[%2d] | 5[%2d] | 4[%2d] | 3[%2d] | 2[%2d] | 1[%2d] | %2d |", playerTwoHouses.get(5),
-			playerTwoHouses.get(4),
-			playerTwoHouses.get(3),
-			playerTwoHouses.get(2),
-			playerTwoHouses.get(1),
-			playerTwoHouses.get(0),
-			board.getPlayerOneStore());
-	String playerTwoString = "| P2 | 6[ " + playerTwoHouses.get(5) + "] | 5[ "
-						+ playerTwoHouses.get(4) + "] | 4[ "
-						+ playerTwoHouses.get(3) + "] | 3[ "
-						+ playerTwoHouses.get(2) + "] | 2[ "
-						+ playerTwoHouses.get(1) + "] | 1[ "
-						+ playerTwoHouses.get(0) + "] |  "
-						+ board.getPlayerOneStore() + " |";
-	io.println(playerTwo);
+	List<House> playerTwoHouses = playerTwo.getHouses();
+	String playerTwoString = String.format("| P2 | 6[%2d] | 5[%2d] | 4[%2d] | 3[%2d] | 2[%2d] | 1[%2d] | %2d |", playerTwoHouses.get(5).seedCount(),
+			playerTwoHouses.get(4).seedCount(),
+			playerTwoHouses.get(3).seedCount(),
+			playerTwoHouses.get(2).seedCount(),
+			playerTwoHouses.get(1).seedCount(),
+			playerTwoHouses.get(0).seedCount(),
+			playerOne.getStore().seedCount());
+	io.println(playerTwoString);
 	
 	io.println("|    |-------+-------+-------+-------+-------+-------|    |");
 	
-	List<Integer> playerOneHouses = board.getPlayerOneHouses();
-	String playerOne = String.format("| %2d | 1[%2d] | 2[%2d] | 3[%2d] | 4[%2d] | 5[%2d] | 6[%2d] | P1 |", board.getPlayerTwoStore(),
-			playerOneHouses.get(0),
-			playerOneHouses.get(1),
-			playerOneHouses.get(2),
-			playerOneHouses.get(3),
-			playerOneHouses.get(4),
-			playerOneHouses.get(5));
-	String playerOneString = "|  " + board.getPlayerTwoStore() + " | 1[ "
-					+ playerOneHouses.get(0) + "] | 2[ "
-					+ playerOneHouses.get(1) + "] | 3[ " 
-					+ playerOneHouses.get(2) + "] | 4[ " 
-					+ playerOneHouses.get(3) + "] | 5[ " 
-					+ playerOneHouses.get(4) + "] | 6[ " 
-					+ playerOneHouses.get(5) + "] | P1 |";
-	io.println(playerOne);
+	List<House> playerOneHouses = playerOne.getHouses();
+	String playerOneString = String.format("| %2d | 1[%2d] | 2[%2d] | 3[%2d] | 4[%2d] | 5[%2d] | 6[%2d] | P1 |", playerTwo.getStore().seedCount(),
+			playerOneHouses.get(0).seedCount(),
+			playerOneHouses.get(1).seedCount(),
+			playerOneHouses.get(2).seedCount(),
+			playerOneHouses.get(3).seedCount(),
+			playerOneHouses.get(4).seedCount(),
+			playerOneHouses.get(5).seedCount());
+	io.println(playerOneString);
 	
 	io.println("+----+-------+-------+-------+-------+-------+-------+----+");
 	}
