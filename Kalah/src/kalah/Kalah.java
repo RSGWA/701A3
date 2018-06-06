@@ -5,7 +5,6 @@ import com.qualitascorpus.testsupport.MockIO;
 
 import kalah.board.Board;
 import kalah.board.BoardChecker;
-import kalah.board.BoardDisplay;
 
 /**
  * This class is the starting point for a Kalah implementation using
@@ -21,7 +20,7 @@ public class Kalah {
 		TurnManager tm = new TurnManager();
 		Board board = new Board();
 		BoardChecker check = new BoardChecker(board, game);
-		BoardDisplay display = new BoardDisplay(io, board.getPlayers());
+		Printer display = new Printer(io, board.getPlayers());
 		
 		boolean quit = false;
 		

@@ -1,19 +1,19 @@
-package kalah.board;
+package kalah;
 
 import java.util.List;
 
 import com.qualitascorpus.testsupport.IO;
 
-import kalah.House;
-import kalah.Player;
+import kalah.board.House;
+import kalah.board.Player;
 
-public class BoardDisplay {
+public class Printer {
 
 	private IO io;
 	private Player playerOne;
 	private Player playerTwo;
 	
-	public BoardDisplay(IO io, List<Player> players) {
+	public Printer(IO io, List<Player> players) {
 		this.io = io;
 		this.playerOne = players.get(0);
 		this.playerTwo = players.get(1);

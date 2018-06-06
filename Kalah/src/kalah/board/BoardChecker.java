@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import kalah.Game;
-import kalah.House;
-import kalah.Store;
 import kalah.TurnManager;
 
 public class BoardChecker {
