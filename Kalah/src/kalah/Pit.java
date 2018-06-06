@@ -1,6 +1,6 @@
 package kalah;
 
-public abstract class Pit {
+public class Pit {
 
 	protected int seeds;
 	
@@ -9,7 +9,11 @@ public abstract class Pit {
 	}
 	
 	public void setSeedCount(int seeds) {
-		this.seeds = seeds;
+		if (seeds < 0) {
+			this.seeds = 0;
+		} else {
+			this.seeds = seeds;
+		}
 	}
 	
 	public int seedCount() {

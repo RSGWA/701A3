@@ -1,8 +1,11 @@
-package kalah;
+package kalah.board;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import kalah.House;
+import kalah.Player;
 
 public class Board {
 	

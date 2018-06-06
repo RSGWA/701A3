@@ -3,7 +3,6 @@ package kalah.board;
 import java.util.Collections;
 import java.util.List;
 
-import kalah.Board;
 import kalah.Game;
 import kalah.House;
 import kalah.Store;
